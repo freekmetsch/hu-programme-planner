@@ -3,7 +3,9 @@
 Academic year: 2026–27. Transcribed on 28 August 2026.
 
 The same course code means an equivalent course across programmes. Teaching periods can differ.
-Different codes stay separate unless equivalence is confirmed. PT and FT share tests. PT contact hours are on Thursdays.
+Different codes stay separate. Teaching options stay within English or Spanish.
+PT and FT share tests. PT contact hours are on Thursdays.
+A checked course means finished or exempt. Marks stay in the browser and do not change Osiris.
 
 Blocks show teaching, not test dates or separate course starts. Individual test dates and entry conditions were not supplied.
 The supplied block E registration dates are for 2025–26 and are not used as 2026–27 deadlines.
