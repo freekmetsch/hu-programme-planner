@@ -195,4 +195,3 @@ J/Y and N are the literal lint flags. Blank periods stay unspecified. Footnote a
 | H3 | not supplied | Elective | 30 | A, B, C, D | Y | spanish main.png |
 | H3 | OASP-HVHE-23 | Vakdidactisch handelen E: Profileren | 14 | A, B, C, D | Y | spanish main.png |
 | H3 | OASP-HAKT-16 | dele b2 - Int. niveautoets - Spaans | 1 | not specified | N | spanish main.png |
-
