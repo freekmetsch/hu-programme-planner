@@ -89,7 +89,8 @@ body{padding-bottom:30px;--mark-width:32px}
 .dates{margin:5px 0 8px}
 #student-view{margin:4px 0 10px}
 .map-stage,.period-stage{margin-bottom:10px}
-.map-stage>h2,.period-stage>h2{font-size:.84rem;margin-bottom:3px}
+.map-columns h2,.period-stage>h2{font-size:.84rem}
+.period-stage>h2{margin-bottom:3px}
 .map-columns{padding:0 7px 2px;font-size:.65rem}
 .map-row{min-height:31px;padding:3px 7px}
 .map-title{font-size:.78rem;line-height:1.15}
@@ -106,8 +107,13 @@ body{padding-bottom:30px;--mark-width:32px}
   .page-head{padding:7px 0 5px}
   .filters{padding:7px}
   .credit-overview{padding:6px 0}
+  .map-columns,.map-row{grid-template-columns:52px repeat(4,minmax(0,1fr)) 28px var(--mark-width);gap:7px}
   .map-row{min-height:45px;padding:5px 7px}
-  .map-title{font-size:.76rem}
+  .map-title{grid-column:1/span 5;font-size:.76rem}
+  .map-slot{grid-column:calc(var(--block-column) + 1)}
+  .map-columns .col-credits{grid-column:6}
+  .map-credits{grid-column:6}.map-mark{grid-column:7}
+  .map-unknown{grid-column:1/span 5}
 }
 </style>
 </head>
@@ -204,7 +210,7 @@ function renderMap() {
   return stages.map(stage => {
     const courses = rows.filter(c => c.stage === stage);
     if (!courses.length) return '';
-    return `<section class="map-stage">${yearHeading(stage)}<div class="map-columns"><span class="col-title"></span>${[...'ABCD'].map(b => `<button data-period-view="${b}" class="${state.block===b?'current':''}" aria-pressed="${state.block===b}" aria-label="Show courses taught in period ${b}">${b}</button>`).join('')}<span class="col-credits">EC</span><span class="sr-only">Finished or exempt</span></div><div class="map-rows">${courses.map(c => {
+    return `<section class="map-stage"><div class="map-columns">${yearHeading(stage)}${[...'ABCD'].map(b => `<button data-period-view="${b}" class="${state.block===b?'current':''}" aria-pressed="${state.block===b}" aria-label="Show courses taught in period ${b}">${b}</button>`).join('')}<span class="col-credits">EC</span><span class="sr-only">Finished or exempt</span></div><div class="map-rows">${courses.map(c => {
       const blocks = [...'ABCD'];
       const slots = c.periods.length ? blocks.map((b,i) => `<span class="map-slot ${c.periods.includes(b)?'on':''} ${!c.periods.includes(blocks[i-1])?'start':''} ${!c.periods.includes(blocks[i+1])?'end':''} ${state.block===b?'selected':''}" style="--block-column:${i+1}" aria-hidden="true"></span>`).join('') : '<span class="map-unknown">Timing not specified</span>';
       return `<div class="map-row ${colour(c)} ${done(c)?'is-done':''}"><button class="course-title map-title" data-open="${c.id}" aria-label="${h(c.name)}, ${c.ec} credits, ${h(periodText(c))}">${h(c.name)}</button>${slots}<span class="credits map-credits">${c.ec}</span><div class="map-mark">${rowControl(c)}</div></div>`;
