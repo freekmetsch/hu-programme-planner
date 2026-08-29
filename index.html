@@ -49,7 +49,6 @@ body{padding-bottom:30px;--mark-width:32px}
 .course-guidance p+p{margin-top:10px}
 .planner-notes p{max-width:80ch}
 .footer{margin-top:30px;display:flex;align-items:baseline;gap:24px;flex-wrap:wrap;font-size:.8rem}
-.footer details[open]{flex-basis:100%}
 .period-stage{margin-bottom:28px}
 .period-stage>h2{margin-bottom:10px}
 .planner-notes a{margin-right:18px}
@@ -74,8 +73,15 @@ body{padding-bottom:30px;--mark-width:32px}
 
 /* Approved compact ledger layout. */
 .wrap{max-width:1480px;padding:0 18px}
-.page-head{padding:10px 0 8px}
+.page-head{padding:10px 0 8px;flex-wrap:wrap}
+.page-title{display:flex;align-items:center;gap:14px;min-width:0}
 .page-head h1{font-size:1.35rem}
+.header-actions{display:flex;align-items:center;gap:14px;margin-left:auto;white-space:nowrap}
+.header-action{display:inline-flex;align-items:center;gap:5px;border:0;background:none;padding:3px 1px;color:#0054a5;font-size:.78rem;line-height:1.2;text-decoration:underline;text-underline-offset:.2em}
+.header-action svg{width:15px;height:15px;flex:none}
+.short-label{display:none}
+.about-panel{flex-basis:100%;width:100%;margin-top:2px;padding:10px 12px;background:#e2eaf2;border-radius:4px}
+.about-panel p:last-child{margin-bottom:0}
 .filters{padding:8px 10px;gap:8px}
 .filters label{font-size:.72rem}
 .filters select,.filters input{margin-top:2px;padding:5px 7px;height:31px;font-size:.8rem}
@@ -105,6 +111,14 @@ body{padding-bottom:30px;--mark-width:32px}
 @media(max-width:720px){
   .wrap{padding:0 9px}
   .page-head{padding:7px 0 5px}
+  .page-title{gap:5px}
+  .page-head h1{font-size:1rem;letter-spacing:-.035em;white-space:nowrap}
+  .page-head .year{font-size:.68rem;white-space:nowrap}
+  .header-actions{gap:5px}
+  .header-action{gap:3px;padding:3px 0;font-size:.69rem}
+  .header-action svg{width:13px;height:13px}
+  .wide-label{display:none}.short-label{display:inline}
+  .about-panel{margin-top:3px;padding:9px}
   .filters{padding:7px}
   .credit-overview{padding:6px 0}
   .map-columns,.map-row{grid-template-columns:52px repeat(4,minmax(0,1fr)) 28px var(--mark-width);gap:7px}
@@ -115,12 +129,17 @@ body{padding-bottom:30px;--mark-width:32px}
   .map-credits{grid-column:6}.map-mark{grid-column:7}
   .map-unknown{grid-column:1/span 5}
 }
+@media print{.header-actions,.about-panel{display:none!important}}
 </style>
 </head>
 <body>
 <a class="skip" href="#student-view">Skip to courses</a>
 <div class="wrap">
-<header class="page-head"><h1>Programme planner</h1><span class="year">2026–27</span></header>
+<header class="page-head"><div class="page-title"><h1>Programme planner</h1><span class="year">2026–27</span></div><div class="header-actions" role="group" aria-label="Planner information"><button id="about-toggle" class="header-action" type="button" aria-label="About this planner" aria-controls="about-panel" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg><span class="wide-label" aria-hidden="true">About this planner</span><span class="short-label" aria-hidden="true">About</span></button><a class="header-action feedback-link" aria-label="Feedback: bugs and requests" href="mailto:freek.metsch@hu.nl?subject=Programme%20planner%20feedback&amp;body=My%20suggestion%20or%20report%3A"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M4 5h16v11H8l-4 4V5z"></path></svg><span class="wide-label" aria-hidden="true">Feedback (bugs &amp; requests)</span><span class="short-label" aria-hidden="true">Feedback</span></a></div><div id="about-panel" class="about-panel planner-notes" hidden>
+<p>Periods show teaching in 2026–27. Years show the usual study route. Several marked periods can belong to one course run.</p>
+<p>PT and FT share tests. <strong>Check</strong> your timetable and Osiris for class times and test dates.</p>
+<p>Marks are personal; official results are in Osiris. Clearing browser data removes your marks.</p>
+</div></header>
 <main>
 <section class="filters" aria-label="Course filters">
 <label class="programme-filter">Programme<select id="programme"></select></label>
@@ -139,11 +158,7 @@ body{padding-bottom:30px;--mark-width:32px}
 <p id="action-status" class="sr-only" role="status" aria-live="polite"></p>
 <div id="student-view" tabindex="-1"></div>
 </main>
-<footer class="footer"><a href="https://studiegids.hu.nl/" target="_blank" rel="noopener">HU study guides</a><details><summary>About this planner</summary><div class="planner-notes">
-<p>Periods show teaching in 2026–27. Years show the usual study route. Several marked periods can belong to one course run.</p>
-<p>PT and FT share tests. <strong>Check</strong> your timetable and Osiris for class times and test dates.</p>
-<p>Marks are personal; official results are in Osiris. Clearing browser data removes your marks.</p>
-</div></details></footer>
+<footer class="footer"><a href="https://studiegids.hu.nl/" target="_blank" rel="noopener">HU study guides</a></footer>
 </div>
 <script>
 'use strict';
@@ -302,6 +317,12 @@ $('programme').innerHTML = DATA.programmes.map(p => `<option value="${p.id}">${h
 for (const [id,field] of [['programme','programme'],['course-type','courseType'],['stage','stage']]) $(id).addEventListener('change',e => { state[field] = e.target.value; render(); revealCourse(); });
 $('search').addEventListener('input',e => { state.search = e.target.value; render(); revealCourse(); });
 $('remaining').addEventListener('change',e => { state.remaining = e.target.checked; render(); revealCourse(); });
+$('about-toggle').addEventListener('click',() => {
+  const panel = $('about-panel');
+  const open = panel.hidden;
+  panel.hidden = !open;
+  $('about-toggle').setAttribute('aria-expanded',open);
+});
 document.addEventListener('change',e => {
   if (e.target.dataset.done) setDone(e.target.dataset.done,e.target.checked);
 });
