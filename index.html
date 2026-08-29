@@ -199,12 +199,12 @@ function courseRow(course, test = false) {
   return `<article class="course-row ${colour(course)} ${done(course)?'is-done':''}"><div><button class="course-title" data-open="${course.id}">${h(course.name)}</button><div class="course-meta">${test?'<span class="small muted">LKT only</span>':periodStrip(course)}</div></div><span class="credits">${course.ec} EC</span><div>${rowControl(course)}</div></article>`;
 }
 function renderMap() {
-  const rows = ownRows();
-  if (!rows.length) return '<p class="empty">No courses match.</p>';
+  const rows = ownRows().filter(c => state.block === 'all' || c.periods.includes(state.block));
+  if (!rows.length) return `<p class="empty">${state.block === 'all' ? 'No courses match.' : 'No teaching marked for this period.'}</p>`;
   return stages.map(stage => {
     const courses = rows.filter(c => c.stage === stage);
     if (!courses.length) return '';
-    return `<section class="map-stage">${yearHeading(stage)}<div class="map-columns"><span class="col-title"></span>${[...'ABCD'].map(b => `<button data-period-view="${b}" class="${state.block===b?'current':''}" aria-label="Open period ${b}">${b}</button>`).join('')}<span class="col-credits">EC</span><span class="sr-only">Finished or exempt</span></div><div class="map-rows">${courses.map(c => {
+    return `<section class="map-stage">${yearHeading(stage)}<div class="map-columns"><span class="col-title"></span>${[...'ABCD'].map(b => `<button data-period-view="${b}" class="${state.block===b?'current':''}" aria-pressed="${state.block===b}" aria-label="Show courses taught in period ${b}">${b}</button>`).join('')}<span class="col-credits">EC</span><span class="sr-only">Finished or exempt</span></div><div class="map-rows">${courses.map(c => {
       const blocks = [...'ABCD'];
       const slots = c.periods.length ? blocks.map((b,i) => `<span class="map-slot ${c.periods.includes(b)?'on':''} ${!c.periods.includes(blocks[i-1])?'start':''} ${!c.periods.includes(blocks[i+1])?'end':''} ${state.block===b?'selected':''}" style="--block-column:${i+1}" aria-hidden="true"></span>`).join('') : '<span class="map-unknown">Timing not specified</span>';
       return `<div class="map-row ${colour(c)} ${done(c)?'is-done':''}"><button class="course-title map-title" data-open="${c.id}" aria-label="${h(c.name)}, ${c.ec} credits, ${h(periodText(c))}">${h(c.name)}</button>${slots}<span class="credits map-credits">${c.ec}</span><div class="map-mark">${rowControl(c)}</div></div>`;
@@ -303,7 +303,7 @@ document.addEventListener('click',e => {
   const button = e.target.closest('button'); if (!button) return;
   if (button.dataset.view) setView(button.dataset.view);
   else if (button.dataset.block) { state.block = button.dataset.block; render(); }
-  else if (button.dataset.periodView) { state.block = button.dataset.periodView; setView('periods'); }
+  else if (button.dataset.periodView) { state.block = button.dataset.periodView; render(); }
   else if (button.dataset.open) openCourse(button.dataset.open);
   else if (button.dataset.course) { state.focus = button.dataset.course; render(); revealCourse(); $('course-heading')?.focus(); }
 
